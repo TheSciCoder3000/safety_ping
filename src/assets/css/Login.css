@@ -1,0 +1,113 @@
+body {
+    background-color: #1d3557;
+    position: relative;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1d3557, #457b9d);
+    z-index: 1;
+    opacity: 0.9;
+}
+
+body video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+input {
+    width: 240px;
+    padding: 10px;
+    margin-top: 1.5px;
+    margin-bottom: 1.5px;
+    border-radius: 5px;
+    border: none;
+    z-index: 2;
+    position: relative;
+}
+
+button {
+    width: 66px;
+    height: 40px;
+    background: #457b9d;
+    color: white;
+    margin: 0px;
+    border: none;
+    border-radius: 8px;
+    z-index: 2;
+    position: relative;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    position: relative;
+}
+
+h3 {
+    color: #000000;
+    font-style: italic;
+    padding: 0px;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 16px;
+    z-index: 2;
+    position: relative;
+}
+
+h2 {
+    font-size: 24px;
+    z-index: 2;
+    position: relative;
+}
+
+/* CONTAINER */
+.container {
+    width: 313px;
+    height: 322px;
+    background-color: #f1faee;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    position: relative;
+}
+
+.container-register {
+    width: 313px;
+    height: 512px;
+    background-color: #f1faee;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    position: relative;
+}
