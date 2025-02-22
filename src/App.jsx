@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import Home from './pages/Home';
 import Map from './pages/map';
 import Account from './pages/Account';
-import Login from './Login.jsx';
+import Login from './pages/Login.jsx';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {

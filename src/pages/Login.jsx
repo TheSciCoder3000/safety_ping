@@ -1,8 +1,8 @@
-import { useState } from 'react';
-
-import './Login.css';
+import { useEffect, useState } from 'react';
+import { useAuth } from '../components/contexts/AuthContext';
+import '../assets/css/Login.css';
 import { useNavigate } from 'react-router';
-import { loginUser, registerUser } from './api/auth';
+import { loginUser, registerUser } from '../api/auth';
 
 
 const Login = () => {
@@ -13,6 +13,13 @@ const Login = () => {
   const [lastname, setLastname] = useState('');
   const [contactNumber, setContactNumber] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const { currentUser } = useAuth();
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate('/home');
+    }
+  }, [currentUser])
 
   const navigate = useNavigate();
 
