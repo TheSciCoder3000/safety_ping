@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../assets/css/Maps.css';
@@ -31,7 +31,7 @@ function Map() {
       const { latitude, longitude } = position.coords;
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
-        style: 'mapbox://styles/examples/clg45vm7400c501pfubolb0xz', // Ensure this style URL is valid
+        style: 'mapbox://styles/mapbox/streets-v12', // Ensure this style URL is valid
         center: [longitude, latitude], // Set center to user's current location
         zoom: 10.7
       });
@@ -40,14 +40,26 @@ function Map() {
 
       // Fetch existing pins from Firestore and add them to the map
       const fetchPins = async () => {
-        const querySnapshot = await getDocs(collection(db, 'pins'));
-        querySnapshot.forEach((doc) => {
-          const pinData = doc.data();
-          new mapboxgl.Marker()
-            .setLngLat(pinData.location)
-            .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pinData.description))
-            .addTo(mapRef.current);
-        });
+        try {
+          const querySnapshot = await getDocs(collection(db, 'pins'));
+          const fetchedPins = [];
+          querySnapshot.forEach((doc) => {
+            fetchedPins.push({ id: doc.id, ...doc.data() });
+          });
+          setPins(fetchedPins);
+          setLoading(false);
+
+          // Add fetched pins to the map
+          fetchedPins.forEach(pin => {
+            if (pin.location) new mapboxgl.Marker()
+              .setLngLat(pin.location)
+              .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pin.description))
+              .addTo(map);
+          });
+        } catch (error) {
+          console.error('Error fetching pins: ', error);
+          setLoading(false);
+        }
       };
 
       fetchPins();
@@ -88,49 +100,60 @@ function Map() {
       const fetchPins = async () => {
         try {
           const querySnapshot = await getDocs(collection(db, 'pins'));
+          const fetchedPins = [];
           querySnapshot.forEach((doc) => {
-            const pinData = doc.data();
-            new mapboxgl.Marker()
-              .setLngLat(pinData.location)
-              .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pinData.description))
-              .addTo(mapRef.current);
+            fetchedPins.push({ id: doc.id, ...doc.data() });
           });
-        };
+          setPins(fetchedPins);
+          setLoading(false);
 
-        fetchPins();
+          // Add fetched pins to the map
+          fetchedPins.forEach(pin => {
+            new mapboxgl.Marker()
+              .setLngLat(pin.location)
+              .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pin.description))
+              .addTo(map);
+          });
+        } catch (error) {
+          console.error('Error fetching pins: ', error);
+          setLoading(false);
+        }
+      };
 
-        map.on('click', (event) => {
-          if (isAddingPin) {
-            setFormData({
-              ...formData,
-              location: event.lngLat,
-              time: new Date().toLocaleTimeString(),
-              date: new Date().toLocaleDateString()
-            });
-            setShowForm(true);
-          }
-        });
+      fetchPins();
 
-        // Change cursor based on mode
+      map.on('click', (event) => {
         if (isAddingPin) {
-          map.getCanvas().style.cursor = 'crosshair';
-        } else {
-          map.getCanvas().style.cursor = 'grab';
+          setFormData({
+            ...formData,
+            location: event.lngLat,
+            time: new Date().toLocaleTimeString(),
+            date: new Date().toLocaleDateString()
+          });
+          setShowForm(true);
         }
-      };
+      });
 
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(initializeMap, handleLocationError);
+      // Change cursor based on mode
+      if (isAddingPin) {
+        map.getCanvas().style.cursor = 'crosshair';
       } else {
-        handleLocationError(new Error('Geolocation is not supported by this browser.'));
+        map.getCanvas().style.cursor = 'grab';
       }
+    };
 
-      return () => {
-        if (mapRef.current) {
-          mapRef.current.remove();
-        }
-      };
-    }, [isAddingPin]); // Re-run effect when isAddingPin changes
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(initializeMap, handleLocationError);
+    } else {
+      handleLocationError(new Error('Geolocation is not supported by this browser.'));
+    }
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+      }
+    };
+  }, [isAddingPin]); // Re-run effect when isAddingPin changes
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
