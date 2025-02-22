@@ -211,26 +211,22 @@ function Map() {
           <button type="submit">Add Pin</button>
         </form>
       )}
-      <div className="pin-list">
+      {/* <div className="pin-list">
         <h3>Pin IDs:</h3>
         <ul>
           {pins.map((pin) => (
             <li key={pin.id}>Pin ID: {pin.pinId}</li>
           ))}
         </ul>
-      </div>
+      </div> */}
       <button
         className="toggle-add-pin"
         onClick={() => setIsAddingPin(!isAddingPin)}
       >
-        {isAddingPin ? 'Exit Add Pin Mode' : 'Add Pin Mode'}
+        {isAddingPin ? 'Exit Add Pin' : 'Add Pin'}
       </button>
-      <button
-        className="get-user-location"
-        onClick={getUserLocation}
-      >
-        Get My Location
-      </button>
+
+      <button className="get-user-location" onClick={getUserLocation}>Get My Location</button>
       <BottomNav />
     </>
   );
