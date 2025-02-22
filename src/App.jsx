@@ -1,11 +1,11 @@
 
-//import './App.css'
+import './App.css'
 import { BrowserRouter, Routes, Route } from "react-router";
-import BottomNav from './components/BottomNav';
-import * as React from 'react';
 import Home from './pages/Home';
 import Map from './pages/Map';
 import Account from './pages/Account';
+import Login from './pages/Login.jsx';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
 
@@ -13,14 +13,16 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/Home" element={<Home />} />
-          <Route path="/Map" element={<Map />} />
-          <Route path="/Account" element={<Account />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/map" element={<Map />} />
+            <Route path="/account" element={<Account />} />
+          </Route>
+          <Route path="/login" element={<Login />} />
         </Routes>
-        <BottomNav />
       </BrowserRouter>
     </>
   )
 }
 
-export default App
+export default App;
