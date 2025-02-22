@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { auth } from './firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 import './Login.css';
 
@@ -40,17 +40,17 @@ const Login = () => {
       return;
     }
     try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-        await setDoc(doc(db, 'users', user.uid), {
+      await setDoc(doc(db, 'users', user.uid), {
         email,
         firstname,
         lastname,
         contactNumber
-        });
+      });
 
-        alert('Registration successful');
+      alert('Registration successful');
 
     } catch (error) {
       console.error('Registration error:', error);

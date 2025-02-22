@@ -1,4 +1,4 @@
-body{
+body {
     background-color: #1d3557;
     font-family: 'Roboto', sans-serif;
     margin: 0;
@@ -6,11 +6,11 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 874px;
-    width: 402px;
+    height: 100vh;
+    width: 100vw;
 }
 
-input{
+input {
     width: 240px;
     padding: 10px;
     margin-top: 1.5px;
@@ -19,7 +19,7 @@ input{
     border: none;
 }
 
-button{
+button {
     width: 66px;
     height: 40px;
 
@@ -31,14 +31,14 @@ button{
     border-radius: 8px;
 }
 
-form{
+form {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-h3{
+h3 {
     color: #000000;
     font-style: italic;
     padding: 0px;
@@ -47,24 +47,24 @@ h3{
     font-size: 16px;
 }
 
-h2{
+h2 {
     font-size: 24px;
 }
 
 /* CONTAINER */
-.container{
+.container {
     width: 313px;
     height: 322px;
     background-color: #f1faee;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);    
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.container-register{
+.container-register {
     width: 313px;
     height: 512px;
     background-color: #f1faee;
