@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router";
-import BottomNav from './components/BottomNav';
 import Home from './pages/Home';
-import Map from './pages/Map';
+import Map from './pages/map';
 import Account from './pages/Account';
 import Login from './Login.jsx';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
 
@@ -11,12 +11,13 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/Home" element={<Home />} />
-          <Route path="/Map" element={<Map />} />
-          <Route path="/Account" element={<Account />} />
-          <Route path="/" element={<Login />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/map" element={<Map />} />
+            <Route path="/account" element={<Account />} />
+          </Route>
+          <Route path="/login" element={<Login />} />
         </Routes>
-        <BottomNav />
       </BrowserRouter>
     </>
   )

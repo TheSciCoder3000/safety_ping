@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
-import { auth } from './firebase';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
-import { Link } from 'react-router';
+import { useState } from 'react';
 
 import './Login.css';
+import { useNavigate } from 'react-router';
+import { loginUser, registerUser } from './api/auth';
 
 
-const db = getFirestore();
 const Login = () => {
   const [showLogin, setShowLogin] = useState(true);
   const [email, setEmail] = useState('');
@@ -17,6 +14,8 @@ const Login = () => {
   const [contactNumber, setContactNumber] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  const navigate = useNavigate();
+
   const toggleForm = () => {
     setShowLogin(!showLogin);
   };
@@ -24,8 +23,8 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert('Login successful');
+      await loginUser(email, password);
+      navigate('/home');
     } catch (error) {
       console.error('Login error:', error);
       alert(error.message);
@@ -40,17 +39,14 @@ const Login = () => {
       return;
     }
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      await setDoc(doc(db, 'users', user.uid), {
+      await registerUser(email, password, {
         email,
         firstname,
         lastname,
         contactNumber
       });
 
-      alert('Registration successful');
+      navigate('/home');
 
     } catch (error) {
       console.error('Registration error:', error);
@@ -71,7 +67,7 @@ const Login = () => {
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" /><br />
             <button type="submit">Login</button><br />
           </form>
-          <h3>Don't have an account? <a href="#" onClick={toggleForm}>Register</a></h3>
+          <h3>Don&apos;t have an account? <a href="#" onClick={toggleForm}>Register</a></h3>
           {/* <h3>LGU Login <Link to="/LGU">Login Here</Link></h3> */}
 
         </div>
