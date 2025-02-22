@@ -4,6 +4,8 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'fire
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 
+import './Login.css';
+
 
 const db = getFirestore();
 const Login = () => {
@@ -58,29 +60,28 @@ const Login = () => {
 
   return (
     <div>
-      <h1>SafetyPing</h1>
       {showLogin ? (
-        <div>
+        <div className='container'>
           <form onSubmit={handleLogin}>
-            <h2>Login</h2>
-            <label>Email: </label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" /><br />
-            <label>Password: </label><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" /><br />
+            <h2 className='h2-login'>LOGIN</h2>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" /><br />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" /><br />
             <button type="submit">Login</button><br />
           </form>
           <h3>Don't have an account? <a href="#" onClick={toggleForm}>Register</a></h3>
-          <h3>LGU Login <Link to="/LGU">Login Here</Link></h3>
+          {/* <h3>LGU Login <Link to="/LGU">Login Here</Link></h3> */}
 
         </div>
       ) : (
-        <div>
+        <div className='container-register'>
           <form onSubmit={handleRegister}>
             <h2>Register</h2>
-            <label>Email: </label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" /><br />
-            <label>Firstname: </label><input type="text" value={firstname} onChange={(e) => setFirstname(e.target.value)} placeholder="Firstname" /><br />
-            <label>Lastname: </label><input type="text" value={lastname} onChange={(e) => setLastname(e.target.value)} placeholder="Lastname" /><br />
-            <label>Contact Number: </label><input type="tel" value={contactNumber} onChange={(e) => setContactNumber(e.target.value)} placeholder="Telephone/Cellphone Number" /><br />
-            <label>Password: </label><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" /><br />
-            <label>Confirm Password: </label><input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Retype Password" /><br />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" /><br />
+            <input type="text" value={firstname} onChange={(e) => setFirstname(e.target.value)} placeholder="First name" /><br />
+            <input type="text" value={lastname} onChange={(e) => setLastname(e.target.value)} placeholder="Last name" /><br />
+            <input type="tel" value={contactNumber} onChange={(e) => setContactNumber(e.target.value)} placeholder="Telephone/Cellphone Number" /><br />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" /><br />
+            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Retype Password" /><br />
             <button type="submit">Register</button><br />
           </form>
           <h3>Already have an account? <a href="#" onClick={toggleForm}>Login</a></h3>
