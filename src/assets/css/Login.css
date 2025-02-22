@@ -13,6 +13,7 @@ body {
 }
 
 body::before {
+    display: none;
     content: "";
     position: absolute;
     top: 0;
