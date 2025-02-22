@@ -15,7 +15,7 @@ const BottomNav = () => {
                     position: 'fixed',
                     bottom: 0,
                     left: 0,
-                    backgroundColor: '#f1faee', // This color will now apply
+                    backgroundColor: '#f1faee',
                     zIndex: 1000,
                 }}
                 showLabels

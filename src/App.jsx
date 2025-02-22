@@ -1,5 +1,5 @@
 
-import './App.css'
+//import './App.css'
 import { BrowserRouter, Routes, Route } from "react-router";
 import BottomNav from './components/BottomNav';
 import * as React from 'react';
