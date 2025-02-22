@@ -35,3 +35,38 @@
   border-radius: 10px;
   cursor: pointer;
 }
+
+
+.pin-form {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  width: 200px;
+}
+
+.pin-form label {
+  display: block;
+  margin-bottom: 5px;
+  color: black;
+}
+
+.pin-form input {
+  display: block;
+  margin-bottom: 10px;
+  width: 80%;
+  padding: 5px;
+}
+
+.pin-form button {
+  padding: 5px 10px;
+  background: #457b9d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
