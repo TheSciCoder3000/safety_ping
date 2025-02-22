@@ -5,7 +5,7 @@ export const createUserDb = async (userId, userData) => {
     return setDoc(doc(db, "users", userId), userData)
 }
 
-export const createUserPin = async (userId, title, description, report, category) => {
+export const createUserPin = async (userId, title, description, report, category, location) => {
     try {
         const docRef = await addDoc(collection(db, "pins"), {
             userId,  // Associate the post with the user
@@ -13,7 +13,8 @@ export const createUserPin = async (userId, title, description, report, category
             description,
             report,
             category,
-            timestamp: new Date() // Add a timestamp for sorting
+            timestamp: new Date(), // Add a timestamp for sorting
+            location
         });
         console.log(docRef)
         return docRef.id; // Return the generated document ID
