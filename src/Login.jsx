@@ -60,6 +60,9 @@ const Login = () => {
 
   return (
     <div>
+      <video autoPlay muted loop>
+        <source src="https://static.pbslearningmedia.org/media/media_files/e29ec3e0-5b82-4322-b681-b9858e6391e1/022a1ec0-23ff-447c-9a4d-c7ff3570f252.mp4" type="video/mp4" />
+      </video>
       {showLogin ? (
         <div className='container'>
           <form onSubmit={handleLogin}>
