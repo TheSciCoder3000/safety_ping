@@ -21,6 +21,7 @@ function Map() {
   const [loading, setLoading] = useState(true);
   const [pins, setPins] = useState([]);
   const [isAddingPin, setIsAddingPin] = useState(false); // Toggle for "add pin" mode
+  const [userLocation, setUserLocation] = useState(null); // State to store user's location
 
   // Initialize the map and fetch pins
   useEffect(() => {
@@ -83,52 +84,53 @@ function Map() {
 
       mapRef.current = map;
 
-      // Fetch existing pins from Firestore and add them to the map
+      // Fetch pins from Firestore
       const fetchPins = async () => {
-        const querySnapshot = await getDocs(collection(db, 'pins'));
-        querySnapshot.forEach((doc) => {
-          const pinData = doc.data();
-          new mapboxgl.Marker()
-            .setLngLat(pinData.location)
-            .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pinData.description))
-            .addTo(mapRef.current);
+        try {
+          const querySnapshot = await getDocs(collection(db, 'pins'));
+          querySnapshot.forEach((doc) => {
+            const pinData = doc.data();
+            new mapboxgl.Marker()
+              .setLngLat(pinData.location)
+              .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pinData.description))
+              .addTo(mapRef.current);
+          });
+        };
+
+        fetchPins();
+
+        map.on('click', (event) => {
+          if (isAddingPin) {
+            setFormData({
+              ...formData,
+              location: event.lngLat,
+              time: new Date().toLocaleTimeString(),
+              date: new Date().toLocaleDateString()
+            });
+            setShowForm(true);
+          }
         });
+
+        // Change cursor based on mode
+        if (isAddingPin) {
+          map.getCanvas().style.cursor = 'crosshair';
+        } else {
+          map.getCanvas().style.cursor = 'grab';
+        }
       };
 
-      fetchPins();
-
-      map.on('click', (event) => {
-        if (isAddingPin) {
-          setFormData({
-            ...formData,
-            location: event.lngLat,
-            time: new Date().toLocaleTimeString(),
-            date: new Date().toLocaleDateString()
-          });
-          setShowForm(true);
-        }
-      });
-
-      // Change cursor based on mode
-      if (isAddingPin) {
-        map.getCanvas().style.cursor = 'crosshair';
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(initializeMap, handleLocationError);
       } else {
-        map.getCanvas().style.cursor = 'grab';
+        handleLocationError(new Error('Geolocation is not supported by this browser.'));
       }
-    };
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(initializeMap, handleLocationError);
-    } else {
-      handleLocationError(new Error('Geolocation is not supported by this browser.'));
-    }
-
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-      }
-    };
-  }, [isAddingPin]); // Re-run effect when isAddingPin changes
+      return () => {
+        if (mapRef.current) {
+          mapRef.current.remove();
+        }
+      };
+    }, [isAddingPin]); // Re-run effect when isAddingPin changes
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -204,6 +206,35 @@ function Map() {
     }
   };
 
+  // Function to get user's location
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+        if (result.state === 'granted' || result.state === 'prompt') {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              setUserLocation({ lat: latitude, lng: longitude });
+              mapRef.current.flyTo({ center: [longitude, latitude], zoom: 14 });
+              new mapboxgl.Marker({ color: 'red' })
+                .setLngLat([longitude, latitude])
+                .setPopup(new mapboxgl.Popup({ offset: 25 }).setText('You are here'))
+                .addTo(mapRef.current);
+            },
+            (error) => {
+              console.error('Error getting user location:', error);
+              alert('Error getting user location');
+            }
+          );
+        } else {
+          alert('Geolocation permission denied');
+        }
+      });
+    } else {
+      alert('Geolocation is not supported by this browser.');
+    }
+  };
+
   return (
     <>
       <div id='map-container' ref={mapContainerRef} className="map-container" />
@@ -221,20 +252,22 @@ function Map() {
           <button type="submit">Add Pin</button>
         </form>
       )}
-      <div className="pin-list">
+      {/* <div className="pin-list">
         <h3>Pin IDs:</h3>
         <ul>
           {pins.map((pin) => (
             <li key={pin.id}>Pin ID: {pin.pinId}</li>
           ))}
         </ul>
-      </div>
+      </div> */}
       <button
         className="toggle-add-pin"
         onClick={() => setIsAddingPin(!isAddingPin)}
       >
-        {isAddingPin ? 'Exit Add Pin Mode' : 'Add Pin Mode'}
+        {isAddingPin ? 'Exit Add Pin' : 'Add Pin'}
       </button>
+
+      <button className="get-user-location" onClick={getUserLocation}>Get My Location</button>
       <BottomNav />
     </>
   );
