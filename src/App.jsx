@@ -1,33 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useRef, useEffect } from 'react'
+import mapboxgl from 'mapbox-gl'
+import 'mapbox-gl/dist/mapbox-gl.css';
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const mapRef = useRef()
+  const mapContainerRef = useRef()
+
+  useEffect(() => {
+    mapboxgl.accessToken = 'pk.eyJ1IjoibmV1cm9jb2RlciIsImEiOiJjbTdmdHoxOXYwcmptMmxxM2NuZ2d5a2FiIn0.ZvI5-Xd-lsB-c2Fhou3KDQ'
+    mapRef.current = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: 'mapbox://styles/examples/clg45vm7400c501pfubolb0xz',
+      center: [-87.661557, 41.893748],
+      zoom: 10.7
+    });
+
+    mapRef.current.on('click', (event) => {
+      const features = mapRef.current.queryRenderedFeatures(event.point, {
+        layers: ['chicago-parks']
+      });
+      if (!features.length) {
+        return;
+      }
+      const feature = features[0];
+
+      const popup = new mapboxgl.Popup({ offset: [0, -15] })
+        .setLngLat(feature.geometry.coordinates)
+        .setHTML(
+          `<h3>${feature.properties.title}</h3><p>${feature.properties.description}</p>`
+        )
+        .addTo(mapRef.current);
+    });
+
+    return () => {
+      mapRef.current.remove()
+    }
+  }, [])
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <div id='map-container' ref={mapContainerRef} />
     </>
   )
 }
