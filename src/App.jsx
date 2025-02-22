@@ -1,6 +1,8 @@
+
+import './App.css'
 import { BrowserRouter, Routes, Route } from "react-router";
 import Home from './pages/Home';
-import Map from './pages/map';
+import Map from './pages/Map';
 import Account from './pages/Account';
 import Login from './pages/Login.jsx';
 import ProtectedRoute from './components/ProtectedRoute';

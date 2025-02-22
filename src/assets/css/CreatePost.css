@@ -1,0 +1,81 @@
+.createPostContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #f1faee;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow: hidden; /* Prevents scrolling */
+}
+
+/* TextField mimicking Facebook’s input */
+.createPostBtn {
+    position: fixed;
+    top: env(safe-area-inset-top, 10px); /* Fix for iOS safe area */
+    left: 57%;
+    transform: translateX(-50%);
+    width: 80%;
+    background-color: #ffffff !important;
+    color: #1d3557 !important;
+    padding: 12px 24px !important;
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    font-weight: normal !important;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1) !important;
+    z-index: 1100;
+    text-align: left;
+    cursor: pointer;
+    min-height: 50px; /* Ensure it stays clickable */
+}
+
+/* Drawer styles */
+.createPostDrawer .MuiDrawer-paper {
+    border-radius: 15px 15px 0 0;
+    padding: 20px;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+    max-height: 90vh; /* Prevents it from covering entire screen */
+    overflow-y: auto; /* Allows scrolling */
+}
+
+/* Post Content inside Drawer */
+.postContent {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+/* Post Input inside Drawer */
+.postInput .MuiOutlinedInput-root {
+    width: 95% !important;
+    border-radius: 6px !important;
+    font-size: 16px;
+}
+
+/* Post Submit Button */
+.postSubmit {
+    background-color: #1d3557 !important;
+    color: #ffffff !important;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.postSubmit:hover {
+    background-color: #f1faee !important;
+    color: #1d3557 !important;
+}
+
+/* Ensure it works well on mobile PWA */
+@media (max-width: 600px) {
+    .createPostBtn {
+        width: 95%;
+        min-height: 45px;
+    }
+
+    .createPostDrawer .MuiDrawer-paper {
+        max-height: 95vh;
+    }
+}
