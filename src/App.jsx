@@ -13,9 +13,9 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/0" element={<Home />} />
-          <Route path="/1" element={<Map />} />
-          <Route path="/2" element={<Account />} />
+          <Route path="/Home" element={<Home />} />
+          <Route path="/Map" element={<Map />} />
+          <Route path="/Account" element={<Account />} />
         </Routes>
         <BottomNav />
       </BrowserRouter>
