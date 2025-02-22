@@ -1,3 +1,8 @@
+
+#root {
+    width: 100vw;
+    height: 100vh;
+}
 .createPostContainer {
     position: relative;
     width: 100%;
@@ -7,27 +12,27 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    overflow: hidden; /* Prevents scrolling */
+    overflow: hidden; 
 }
 
-/* TextField mimicking Facebook’s input */
 .createPostBtn {
     position: fixed;
-    top: env(safe-area-inset-top, 10px); /* Fix for iOS safe area */
-    left: 57%;
+    top: env(safe-area-inset-top, 10px); 
+    left: 54%;
     transform: translateX(-50%);
-    width: 80%;
+    width: 90%;
+    max-width: 500px;
     background-color: #ffffff !important;
     color: #1d3557 !important;
-    padding: 12px 24px !important;
-    border-radius: 6px !important;
-    font-size: 12px !important;
+    padding: 12px 18px !important;
+    border-radius: 50px !important;
+    font-size: 14px !important;
     font-weight: normal !important;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1) !important;
     z-index: 1100;
     text-align: left;
     cursor: pointer;
-    min-height: 50px; /* Ensure it stays clickable */
+    min-height: 50px; 
 }
 
 /* Drawer styles */
@@ -35,8 +40,8 @@
     border-radius: 15px 15px 0 0;
     padding: 20px;
     box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
-    max-height: 90vh; /* Prevents it from covering entire screen */
-    overflow-y: auto; /* Allows scrolling */
+    max-height: 90vh; 
+    overflow-y: auto; 
 }
 
 /* Post Content inside Drawer */
@@ -49,8 +54,8 @@
 
 /* Post Input inside Drawer */
 .postInput .MuiOutlinedInput-root {
-    width: 95% !important;
-    border-radius: 6px !important;
+    width: 100% !important;
+    border-radius: 8px !important;
     font-size: 16px;
 }
 
@@ -59,8 +64,9 @@
     background-color: #1d3557 !important;
     color: #ffffff !important;
     padding: 12px;
-    border-radius: 8px;
+    border-radius: 12px !important;
     font-size: 14px;
+    width: auto;
 }
 
 .postSubmit:hover {
