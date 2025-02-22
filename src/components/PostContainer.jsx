@@ -6,11 +6,17 @@
     import MenuItem from '@mui/material/MenuItem';
     import FormControl from '@mui/material/FormControl';
     import InputLabel from '@mui/material/InputLabel';
+    import { createUserPin } from '../api/firestore';
+    import { useAuth } from '../components/contexts/AuthContext';
+   
     const PostContainer = () => {
+        const { currentUser } = useAuth();
+
         const [open, setOpen] = useState(false);
         const [report,setReport] = useState("");
         const [category,setCategory] = useState("");
-
+        const [title, setTitle] = useState("");
+        const [description, setDescription] = useState("");
         const handleReportChange = (event) => {
             setReport(event.target.value);
         };
@@ -23,6 +29,32 @@
             setOpen(newOpen);
         };
 
+        const handleSubmit = async () => {
+            if (!currentUser) {
+                alert("User is not logged in!");
+                return;
+            }
+        
+            if (!title || !description || !report || !category) {
+                alert("Please fill in all fields");
+                return;
+            }
+        
+            try {
+                const pinId = await createUserPin(currentUser.uid, title, description, report, category);
+                alert(`Post created successfully! ID: ${pinId}`);
+                toggleDrawer(false);
+        
+                // Reset form fields
+                setTitle("");
+                setDescription("");
+                setReport("");
+                setCategory("");
+            } catch (error) {
+                console.error("Error creating post:", error);
+                alert("Failed to create post.");
+            }
+        };
         return (
             <div className="createPostContainer">
                 <TextField 
@@ -42,15 +74,18 @@
                         <TextField
                             className='postInput'
                             id="demo-helper-text-misaligned-no-helper"
-                            label="Title" 
+                            label="Title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)} 
                         />
                         <TextField 
                             className='postInput'
                             multiline
                             rows={4}
-                            
                             id="demo-helper-text-misaligned-no-helper" 
                             label="What's the situation?"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
                         />
 
                         <FormControl fullWidth>
@@ -60,9 +95,9 @@
                             id="demo-simple-select"
                             value={report}
                             label="Type of Report"
-                            onChange={handleReportChange}>
-                                <MenuItem value={0}>SOS/Emergencies</MenuItem>
-                                <MenuItem value={1}>Hazards</MenuItem>
+                            onChange={(e) => setReport(e.target.value)}>
+                                <MenuItem value={"SOS"}>SOS/Emergencies</MenuItem>
+                                <MenuItem value={"Hazards"}>Hazards</MenuItem>
                             </Select>
                         </FormControl>
                         <FormControl fullWidth>
@@ -72,11 +107,11 @@
                             id="demo-simple-select"
                             value={category}
                             label="Categories"
-                            onChange={handleCategoryChange}>
-                                <MenuItem value={0}>Road Related</MenuItem>
-                                <MenuItem value={1}>Flooding</MenuItem>
-                                <MenuItem value={2}>Stranded</MenuItem>
-                                <MenuItem value={3}>Medical Related</MenuItem>
+                            onChange={(e) => setCategory(e.target.value)}>
+                                <MenuItem value={"Road Related"}>Road Related</MenuItem>
+                                <MenuItem value={"Flooding"}>Flooding</MenuItem>
+                                <MenuItem value={"Stranded"}>Stranded</MenuItem>
+                                <MenuItem value={"Medical Related"}>Medical Related</MenuItem>
                             </Select>
                         </FormControl>
 
@@ -84,7 +119,7 @@
                             variant="contained" 
                             endIcon={<SendIcon />}
                             className='postSubmit'
-                            onClick={() => toggleDrawer(false)}
+                            onClick={handleSubmit}
                         >
                             Post
                         </Button>
