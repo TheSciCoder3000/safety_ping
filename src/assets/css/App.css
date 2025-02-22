@@ -1,0 +1,72 @@
+#root {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+#map-container {
+    height: 100%;
+    width: 100%;
+    /* temporarily set the background color so we can tell where the map container is positioned */
+    background-color: lightgrey;
+}
+
+.sidebar {
+    background-color: rgb(35 55 75 / 90%);
+    color: #fff;
+    padding: 6px 12px;
+    font-family: monospace;
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 12px;
+    border-radius: 4px;
+}
+
+.reset-button {
+    position: absolute;
+    top: 50px;
+    z-index: 1;
+    left: 12px;
+    padding: 4px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+
+.pin-form {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    width: 200px;
+}
+
+.pin-form label {
+    display: block;
+    margin-bottom: 5px;
+    color: black;
+}
+
+.pin-form input {
+    display: block;
+    margin-bottom: 10px;
+    width: 80%;
+    padding: 5px;
+}
+
+.pin-form button {
+    padding: 5px 10px;
+    background: #457b9d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
