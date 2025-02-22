@@ -21,6 +21,7 @@ function Map() {
   const [loading, setLoading] = useState(true);
   const [pins, setPins] = useState([]);
   const [isAddingPin, setIsAddingPin] = useState(false); // Toggle for "add pin" mode
+  const [userLocation, setUserLocation] = useState(null); // State to store user's location
 
   // Initialize the map and fetch pins
   useEffect(() => {
@@ -34,31 +35,6 @@ function Map() {
     });
 
     mapRef.current = map;
-
-    // // Add sample pins for demonstration
-    // const samplePins = [
-    //   {
-    //     description: 'Trial Sample',
-    //     location: { lng: -87.661557, lat: 41.893748 },
-    //     time: '12:00 PM',
-    //     date: '2023-10-01',
-    //     image: 'https://via.placeholder.com/150'
-    //   },
-    //   {
-    //     description: 'John Juvi Nadapa',
-    //     location: { lng: -87.671557, lat: 41.903748 },
-    //     time: '1:00 PM',
-    //     date: '2023-10-02',
-    //     image: 'https://via.placeholder.com/150'
-    //   }
-    // ];
-
-    // samplePins.forEach(pin => {
-    //   new mapboxgl.Marker()
-    //     .setLngLat(pin.location)
-    //     .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pin.description))
-    //     .addTo(map);
-    // });
 
     // Fetch pins from Firestore
     const fetchPins = async () => {
@@ -189,6 +165,35 @@ function Map() {
     }
   };
 
+  // Function to get user's location
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+        if (result.state === 'granted' || result.state === 'prompt') {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              setUserLocation({ lat: latitude, lng: longitude });
+              mapRef.current.flyTo({ center: [longitude, latitude], zoom: 14 });
+              new mapboxgl.Marker({ color: 'red' })
+                .setLngLat([longitude, latitude])
+                .setPopup(new mapboxgl.Popup({ offset: 25 }).setText('You are here'))
+                .addTo(mapRef.current);
+            },
+            (error) => {
+              console.error('Error getting user location:', error);
+              alert('Error getting user location');
+            }
+          );
+        } else {
+          alert('Geolocation permission denied');
+        }
+      });
+    } else {
+      alert('Geolocation is not supported by this browser.');
+    }
+  };
+
   return (
     <>
       <div id='map-container' ref={mapContainerRef} className="map-container" />
@@ -219,6 +224,12 @@ function Map() {
         onClick={() => setIsAddingPin(!isAddingPin)}
       >
         {isAddingPin ? 'Exit Add Pin Mode' : 'Add Pin Mode'}
+      </button>
+      <button
+        className="get-user-location"
+        onClick={getUserLocation}
+      >
+        Get My Location
       </button>
       <BottomNav />
     </>
