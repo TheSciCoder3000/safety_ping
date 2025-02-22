@@ -27,69 +27,110 @@ function Map() {
   useEffect(() => {
     mapboxgl.accessToken = 'pk.eyJ1IjoibmV1cm9jb2RlciIsImEiOiJjbTdmdHoxOXYwcmptMmxxM2NuZ2d5a2FiIn0.ZvI5-Xd-lsB-c2Fhou3KDQ'; // Replace with your valid token
 
-    const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      style: 'mapbox://styles/examples/clg45vm7400c501pfubolb0xz', // Ensure this style URL is valid
-      center: [-87.661557, 41.893748], // Default center
-      zoom: 10.7
-    });
+    const initializeMap = (position) => {
+      const { latitude, longitude } = position.coords;
+      const map = new mapboxgl.Map({
+        container: mapContainerRef.current,
+        style: 'mapbox://styles/examples/clg45vm7400c501pfubolb0xz', // Ensure this style URL is valid
+        center: [longitude, latitude], // Set center to user's current location
+        zoom: 10.7
+      });
 
-    mapRef.current = map;
+      mapRef.current = map;
 
-    // Fetch pins from Firestore
-    const fetchPins = async () => {
-      try {
+      // Fetch existing pins from Firestore and add them to the map
+      const fetchPins = async () => {
         const querySnapshot = await getDocs(collection(db, 'pins'));
-        const fetchedPins = [];
         querySnapshot.forEach((doc) => {
-          fetchedPins.push({ id: doc.id, ...doc.data() });
-        });
-        setPins(fetchedPins);
-        setLoading(false);
-
-        // Add fetched pins to the map
-        fetchedPins.forEach(pin => {
+          const pinData = doc.data();
           new mapboxgl.Marker()
-            .setLngLat(pin.location)
-            .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pin.description))
-            .addTo(map);
+            .setLngLat(pinData.location)
+            .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pinData.description))
+            .addTo(mapRef.current);
         });
-      } catch (error) {
-        console.error('Error fetching pins: ', error);
-        setLoading(false);
-      }
-    };
+      };
 
-    fetchPins();
+      fetchPins();
 
-    // Handle map clicks to add new pins (only in "add pin" mode)
-    const handleMapClick = (event) => {
+      map.on('click', (event) => {
+        if (isAddingPin) {
+          setFormData({
+            ...formData,
+            location: event.lngLat,
+            time: new Date().toLocaleTimeString(),
+            date: new Date().toLocaleDateString()
+          });
+          setShowForm(true);
+        }
+      });
+
+      // Change cursor based on mode
       if (isAddingPin) {
-        setFormData({
-          ...formData,
-          location: event.lngLat,
-          time: new Date().toLocaleTimeString(),
-          date: new Date().toLocaleDateString()
+        map.getCanvas().style.cursor = 'crosshair';
+      } else {
+        map.getCanvas().style.cursor = 'grab';
+      }
+    };
+
+    const handleLocationError = (error) => {
+      console.error('Error getting user location: ', error);
+      // Fallback to a default location if user location is not available
+      const map = new mapboxgl.Map({
+        container: mapContainerRef.current,
+        style: 'mapbox://styles/examples/clg45vm7400c501pfubolb0xz', // Ensure this style URL is valid
+        center: [-87.661557, 41.893748], // Default center
+        zoom: 10.7
+      });
+
+      mapRef.current = map;
+
+      // Fetch pins from Firestore
+      const fetchPins = async () => {
+        try {
+          const querySnapshot = await getDocs(collection(db, 'pins'));
+          querySnapshot.forEach((doc) => {
+            const pinData = doc.data();
+            new mapboxgl.Marker()
+              .setLngLat(pinData.location)
+              .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pinData.description))
+              .addTo(mapRef.current);
+          });
+        };
+
+        fetchPins();
+
+        map.on('click', (event) => {
+          if (isAddingPin) {
+            setFormData({
+              ...formData,
+              location: event.lngLat,
+              time: new Date().toLocaleTimeString(),
+              date: new Date().toLocaleDateString()
+            });
+            setShowForm(true);
+          }
         });
-        setShowForm(true);
+
+        // Change cursor based on mode
+        if (isAddingPin) {
+          map.getCanvas().style.cursor = 'crosshair';
+        } else {
+          map.getCanvas().style.cursor = 'grab';
+        }
+      };
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(initializeMap, handleLocationError);
+      } else {
+        handleLocationError(new Error('Geolocation is not supported by this browser.'));
       }
-    };
 
-    map.on('click', handleMapClick);
-
-    // Change cursor based on mode
-    if (isAddingPin) {
-      map.getCanvas().style.cursor = 'crosshair';
-    } else {
-      map.getCanvas().style.cursor = 'grab';
-    }
-
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-      }
-    };
-  }, [isAddingPin]); // Re-run effect when isAddingPin changes
+      return () => {
+        if (mapRef.current) {
+          mapRef.current.remove();
+        }
+      };
+    }, [isAddingPin]); // Re-run effect when isAddingPin changes
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -115,13 +156,13 @@ function Map() {
         await uploadBytes(imageRef, formData.image);
         imageUrl = await getDownloadURL(imageRef);
       }
-  
+
       // Convert LngLat object to a plain object
       const location = {
         lng: formData.location.lng,
         lat: formData.location.lat
       };
-  
+
       // Get the current pin ID and increment it
       const pinIdDocRef = doc(db, 'metadata', 'pinId');
       const pinIdDoc = await getDoc(pinIdDocRef);
@@ -132,7 +173,7 @@ function Map() {
       } else {
         await setDoc(pinIdDocRef, { currentId: pinId });
       }
-  
+
       // Add the pin to Firestore
       const docRef = await addDoc(collection(db, 'pins'), {
         description: formData.description,
@@ -142,13 +183,13 @@ function Map() {
         date: formData.date,
         image: imageUrl
       });
-  
+
       // Add the pin to the map
       new mapboxgl.Marker()
         .setLngLat(formData.location)
         .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(formData.description))
         .addTo(mapRef.current);
-  
+
       alert('Pin added successfully');
       setShowForm(false);
       setFormData({
