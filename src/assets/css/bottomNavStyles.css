@@ -1,0 +1,15 @@
+.bottomNavContainer {
+    width: '100%'; 
+    position: 'fixed'; 
+    bottom: 0;
+    left: 0;
+    background-Color: #a8dadc;
+    z-Index: 1000;
+}
+
+.bottomNavbotton {
+color:#457B9D;
+}
+.bottomNavbotton.Mui-selected {
+color:#1D3557;
+}
