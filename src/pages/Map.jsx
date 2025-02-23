@@ -12,7 +12,7 @@ function Map() {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     description: '',
-    details: '',
+    title: '',
     location: null,
     time: '',
     date: '',
@@ -66,7 +66,7 @@ function Map() {
             const color = pin.report == 'SOS' ? 'red' : 'blue';
             if (pin.location) new mapboxgl.Marker({ color: color })
               .setLngLat(pin.location)
-              .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pin.description))
+              .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pin.title))
               .addTo(map);
           });
         } catch (error) {
@@ -123,7 +123,7 @@ function Map() {
             const color = pin.report == 'SOS' ? 'red' : 'blue';
             if (pin.location) new mapboxgl.Marker({ color: color })
               .setLngLat(pin.location)
-              .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pin.description))
+              .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pin.title))
               .addTo(map);
           });
         } catch (error) {
@@ -194,22 +194,10 @@ function Map() {
         await setDoc(pinIdDocRef, { currentId: pinId });
       }
 
-      console.log({
-        description: formData.description,
-        details: formData.details,
-        categories: formData.categories,
-        report: formData.report,
-        pinId: pinId,
-        location: location,
-        time: formData.time,
-        date: formData.date,
-        userId: userId // Include the user ID in the pin document
-      })
-
       // Add the pin to Firestore with the user ID
       const docRef = await addDoc(collection(db, 'pins'), {
+        title: formData.title,
         description: formData.description,
-        details: formData.details,
         categories: formData.categories,
         report: formData.report,
         pinId: pinId,
@@ -222,14 +210,14 @@ function Map() {
       // Add the pin to the map
       new mapboxgl.Marker()
         .setLngLat(formData.location)
-        .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(formData.description))
+        .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(formData.title))
         .addTo(mapRef.current);
 
       alert('Pin added successfully');
       setShowForm(false);
       setFormData({
         description: '',
-        details: '',
+        title: '',
         location: null,
         date: '',
         time: '',
@@ -285,11 +273,11 @@ function Map() {
         <form onSubmit={handleSubmit} className="pin-form">
           <label>
             Situation/Event:
-            <input type="text" name="description" value={formData.description} onChange={handleInputChange} required />
+            <input type="text" name="title" value={formData.title} onChange={handleInputChange} required />
           </label>
           <label>
             Details:
-            <input name="details" value={formData.details} onChange={handleInputChange} required />
+            <input name="description" value={formData.description} onChange={handleInputChange} required />
           </label>
           <label>
             Time:
