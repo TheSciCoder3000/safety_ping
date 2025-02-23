@@ -9,7 +9,9 @@ const NewsFeed = () => {
         const fetchPosts = async () => {
             try {
                 const postData = await getPostData();
-                setPosts(postData);
+
+                const sortData = postData.sort((a, b) => b.timestamp.toDate() - a.timestamp.toDate());
+                setPosts(sortData);
             } catch (error) {
                 console.error("Error fetching posts:", error);
             }
