@@ -7,7 +7,7 @@
     position: relative;
     width: 100%;
     height: 100%;
-    background-color: #f1faee;
+    background-color: white;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -16,14 +16,12 @@
 }
 
 .createPostBtn {
+    background: transparent;
     position: fixed;
     top: env(safe-area-inset-top, 10px); 
-    left: 55%;
-    transform: translateX(-50%);
-    width: 90%;
     background-color: #ffffff !important;
     color: #1d3557 !important;
-    padding: 12px 20px !important;
+    /* padding: 15px 25px !important; */
     border-radius: 10px !important;
     font-size: 14px !important;
     font-weight: normal !important;
