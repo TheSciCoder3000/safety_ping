@@ -27,6 +27,7 @@
 }
 
 .scrollable{
-    overflow-y:auto;
-    height: 86vh;
+    overflow-y: scroll;
+    height: 84vh;
+    
 }
