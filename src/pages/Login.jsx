@@ -17,7 +17,7 @@ const Login = () => {
 
   useEffect(() => {
     if (currentUser) {
-      navigate('/home');
+      navigate('/');
     }
   }, [currentUser])
 
@@ -31,7 +31,7 @@ const Login = () => {
     e.preventDefault();
     try {
       await loginUser(email, password);
-      navigate('/home');
+      navigate('/');
     } catch (error) {
       console.error('Login error:', error);
       alert(error.message);
@@ -53,7 +53,7 @@ const Login = () => {
         contactNumber
       });
 
-      navigate('/home');
+      navigate('/');
 
     } catch (error) {
       console.error('Registration error:', error);
@@ -62,7 +62,7 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className='auth-cont'>
       <video autoPlay muted loop>
         <source src="https://static.pbslearningmedia.org/media/media_files/e29ec3e0-5b82-4322-b681-b9858e6391e1/022a1ec0-23ff-447c-9a4d-c7ff3570f252.mp4" type="video/mp4" />
       </video>

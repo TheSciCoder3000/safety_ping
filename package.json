@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "serve": "set PORT=4433 && serve dist",
+    "deploy": "npm run build && firebase deploy"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
