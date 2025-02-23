@@ -8,6 +8,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import { createUserPin } from '../api/firestore';
 import { useAuth } from '../components/contexts/AuthContext';
+import { Refresh } from '@mui/icons-material';
 
 const PostContainer = () => {
     const { currentUser } = useAuth();
