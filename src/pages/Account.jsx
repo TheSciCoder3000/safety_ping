@@ -4,6 +4,7 @@ import { signOut, updateProfile, updatePassword } from 'firebase/auth';
 import { auth, db } from '../api/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import BottomNav from '../components/BottomNav';
+import Avatar from '@mui/material/Avatar';
 import '../assets/css/Account.css';
 
 const Account = () => {
@@ -71,6 +72,7 @@ const Account = () => {
 
   return (
     <div className="account-container">
+      <Avatar alt="Profile Picture" src={user && user.profilePicture} sx={{ width: 100, height: 100 }} />
       {user && <h1>Welcome, {user.firstname}</h1>}
       {!isEditing ? (
         <button onClick={handleEditClick} className="edit-button">Edit Profile</button>
