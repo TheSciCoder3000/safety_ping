@@ -1,0 +1,32 @@
+.square{
+    height: fit-content;
+    background-color: #f1faee;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    margin-bottom: 1.5rem;
+    padding: 25px;
+
+    border-radius: 8px;
+}
+
+.news-t{
+    color: white;
+    text-align: center;
+}
+
+.news-p{
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #000000;
+}
+
+.news-h{
+    font-weight: 600;
+    color: #000000;
+    margin-top: 0px;
+}
+
+.scrollable{
+    overflow-y:auto;
+    height: 86vh;
+}
