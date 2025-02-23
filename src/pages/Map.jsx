@@ -194,6 +194,10 @@ function Map() {
         await setDoc(pinIdDocRef, { currentId: pinId });
       }
 
+      const dateTimeString = `${formData.date} ${formData.time}`;
+      // Create a new Date object from the combined string
+      const dateTime = new Date(dateTimeString);
+
       // Add the pin to Firestore with the user ID
       const docRef = await addDoc(collection(db, 'pins'), {
         title: formData.title,
@@ -202,8 +206,7 @@ function Map() {
         report: formData.report,
         pinId: pinId,
         location: location,
-        time: formData.time,
-        date: formData.date,
+        timestamp: dateTime,
         userId: userId // Include the user ID in the pin document
       });
 
