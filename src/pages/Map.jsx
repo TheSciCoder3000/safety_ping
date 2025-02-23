@@ -2,9 +2,8 @@ import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../assets/css/Maps.css';
-import { db, storage } from '../api/firebase';
+import { db, auth } from '../api/firebase'; // Import auth from Firebase
 import { collection, addDoc, doc, getDoc, updateDoc, setDoc, getDocs } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import BottomNav from '../components/BottomNav';
 
 function Map() {
@@ -13,31 +12,44 @@ function Map() {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     description: '',
+    details: '',
     location: null,
     time: '',
     date: '',
-    image: null
+    categories: '',
+    reports: ''
   });
   const [loading, setLoading] = useState(true);
   const [pins, setPins] = useState([]);
   const [isAddingPin, setIsAddingPin] = useState(false); // Toggle for "add pin" mode
+  const [userId, setUserId] = useState(null); // State to store the current user's ID
 
-  // Initialize the map and fetch pins
+  // Fetch the current user's ID when the component mounts
   useEffect(() => {
-    mapboxgl.accessToken = 'pk.eyJ1IjoibmV1cm9jb2RlciIsImEiOiJjbTdmdHoxOXYwcmptMmxxM2NuZ2d5a2FiIn0.ZvI5-Xd-lsB-c2Fhou3KDQ'; // Replace with your valid token
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserId(user.uid); // Set the user ID if the user is logged in
+      } else {
+        setUserId(null); // Clear the user ID if the user is not logged in
+      }
+    });
 
+    return () => unsubscribe(); // Cleanup the listener
+  }, []);
+
+  useEffect(() => {
+    mapboxgl.accessToken = 'pk.eyJ1IjoibmV1cm9jb2RlciIsImEiOiJjbTdmdHoxOXYwcmptMmxxM2NuZ2d5a2FiIn0.ZvI5-Xd-lsB-c2Fhou3KDQ'; //API Key
     const initializeMap = (position) => {
       const { latitude, longitude } = position.coords;
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
-        style: 'mapbox://styles/examples/clg45vm7400c501pfubolb0xz', // Ensure this style URL is valid
-        center: [longitude, latitude], // Set center to user's current location
+        style: 'mapbox://styles/examples/clg45vm7400c501pfubolb0xz',
+        center: [longitude, latitude], 
         zoom: 10.7
       });
 
       mapRef.current = map;
 
-      // Fetch existing pins from Firestore and add them to the map
       const fetchPins = async () => {
         const querySnapshot = await getDocs(collection(db, 'pins'));
         querySnapshot.forEach((doc) => {
@@ -59,11 +71,10 @@ function Map() {
             time: new Date().toLocaleTimeString(),
             date: new Date().toLocaleDateString()
           });
-          setShowForm(true);
+          setShowForm(true); // Show the form when a pin location is clicked
         }
       });
 
-      // Change cursor based on mode
       if (isAddingPin) {
         map.getCanvas().style.cursor = 'crosshair';
       } else {
@@ -73,7 +84,6 @@ function Map() {
 
     const handleLocationError = (error) => {
       console.error('Error getting user location: ', error);
-      // Fallback to a default location if user location is not available
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: 'mapbox://styles/examples/clg45vm7400c501pfubolb0xz', // Ensure this style URL is valid
@@ -83,7 +93,6 @@ function Map() {
 
       mapRef.current = map;
 
-      // Fetch existing pins from Firestore and add them to the map
       const fetchPins = async () => {
         const querySnapshot = await getDocs(collection(db, 'pins'));
         querySnapshot.forEach((doc) => {
@@ -105,11 +114,10 @@ function Map() {
             time: new Date().toLocaleTimeString(),
             date: new Date().toLocaleDateString()
           });
-          setShowForm(true);
+          setShowForm(true); // Show the form when a pin location is clicked
         }
       });
 
-      // Change cursor based on mode
       if (isAddingPin) {
         map.getCanvas().style.cursor = 'crosshair';
       } else {
@@ -138,23 +146,9 @@ function Map() {
     });
   };
 
-  const handleImageChange = (e) => {
-    setFormData({
-      ...formData,
-      image: e.target.files[0]
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let imageUrl = null;
-      if (formData.image) {
-        const imageRef = ref(storage, `images/${formData.image.name}`);
-        await uploadBytes(imageRef, formData.image);
-        imageUrl = await getDownloadURL(imageRef);
-      }
-
       // Convert LngLat object to a plain object
       const location = {
         lng: formData.location.lng,
@@ -172,14 +166,17 @@ function Map() {
         await setDoc(pinIdDocRef, { currentId: pinId });
       }
 
-      // Add the pin to Firestore
+      // Add the pin to Firestore with the user ID
       const docRef = await addDoc(collection(db, 'pins'), {
         description: formData.description,
+        details: formData.details,
+        categories: formData.categories,
+        reports: formData.reports,
         pinId: pinId,
-        location: location, // Use the converted location object
+        location: location,
         time: formData.time,
         date: formData.date,
-        image: imageUrl
+        userId: userId // Include the user ID in the pin document
       });
 
       // Add the pin to the map
@@ -192,16 +189,23 @@ function Map() {
       setShowForm(false);
       setFormData({
         description: '',
+        details: '',
         location: null,
-        time: '',
         date: '',
-        image: null
+        time: '',
+        categories: '',
+        reports: ''
       });
       setIsAddingPin(false); // Exit "add pin" mode after submission
     } catch (error) {
       console.error('Error adding document: ', error);
       alert('Error adding pin');
     }
+  };
+
+  const handleToggleAddPin = () => {
+    setIsAddingPin(!isAddingPin);
+    setShowForm(false); // Hide the form when exiting "Add Pin Mode"
   };
 
   return (
@@ -211,27 +215,48 @@ function Map() {
       {showForm && (
         <form onSubmit={handleSubmit} className="pin-form">
           <label>
-            Description:
+            Situation/Event:
             <input type="text" name="description" value={formData.description} onChange={handleInputChange} required />
           </label>
           <label>
-            Image:
-            <input type="file" name="image" onChange={handleImageChange} />
+            Details:
+            <input name="details" value={formData.details} onChange={handleInputChange}required />
+          </label>
+          <label>
+            Time:
+            <input type="text" name="time" value={formData.time} onChange={handleInputChange} required />
+          </label>
+          <label>
+            Date:
+            <input type="date" name="date" value={formData.date} onChange={handleInputChange} required />
+          </label>
+          <label>
+            Location:
+            <input type="text" name="location" value={formData.location ? `${formData.location.lng}, ${formData.location.lat}` : ''} readOnly />
+          </label>
+          <label>
+            Categories:
+            <select name="categories" value={formData.categories} onChange={handleInputChange}>
+              <option value="">Select a category</option>
+              <option value="road">Road Related</option>
+              <option value="emergency">Flooding</option>
+              <option value="health">Stranded</option>
+              <option value="politics">Medical Related</option>
+            </select>
+            <label>
+              Type of Report: 
+              <select name="reports" value={formData.reports} onChange={handleInputChange}>
+                <option value="sos">SOS/Emergencies</option>
+                <option value="hazards">Hazards</option>
+              </select>
+            </label>
           </label>
           <button type="submit">Add Pin</button>
         </form>
       )}
-      <div className="pin-list">
-        <h3>Pin IDs:</h3>
-        <ul>
-          {pins.map((pin) => (
-            <li key={pin.id}>Pin ID: {pin.pinId}</li>
-          ))}
-        </ul>
-      </div>
       <button
         className="toggle-add-pin"
-        onClick={() => setIsAddingPin(!isAddingPin)}
+        onClick={handleToggleAddPin}
       >
         {isAddingPin ? 'Exit Add Pin Mode' : 'Add Pin Mode'}
       </button>

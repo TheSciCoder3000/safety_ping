@@ -8,19 +8,34 @@
   
   .pin-form {
     position: absolute;
-    top: 20px;
-    left: 20px;
+    top: 0;
+    bottom: 300px;
+    left: 0;
+    right: 0;
     background: white;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 0 0 40px 40px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
+    overflow: auto;
+    padding-top: 250px;
+    opacity: 0.8;
+
   }
   
   .pin-form label {
     display: block;
     margin-bottom: 10px;
+    width: 80%;
+    opacity: 1;
   }
+  select.pin-form{ 
+      display: block;
+      margin-bottom: 10px;
+      width: 80%;
+    }
+    
+
   
   .pin-form input {
     width: 100%;
@@ -58,7 +73,7 @@
     position: absolute;
     bottom: 80px;
     left: 20px;
-    background: #007bff;
+    background: #8fbbea;
     color: white;
     border: none;
     padding: 10px 15px;
