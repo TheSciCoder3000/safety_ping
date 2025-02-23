@@ -16,7 +16,7 @@ function Map() {
     location: null,
     time: '',
     date: '',
-    categories: '',
+    category: '',
     report: 'SOS'
   });
   const [loading, setLoading] = useState(true);
@@ -198,7 +198,7 @@ function Map() {
       const docRef = await addDoc(collection(db, 'pins'), {
         title: formData.title,
         description: formData.description,
-        categories: formData.categories,
+        category: formData.category,
         report: formData.report,
         pinId: pinId,
         location: location,
@@ -221,7 +221,7 @@ function Map() {
         location: null,
         date: '',
         time: '',
-        categories: '',
+        category: '',
         report: 'SOS'
       });
       setIsAddingPin(false); // Exit "add pin" mode after submission
@@ -293,7 +293,7 @@ function Map() {
           </label>
           <label>
             Categories:
-            <select name="categories" value={formData.categories} onChange={handleInputChange}>
+            <select name="category" value={formData.category} onChange={handleInputChange}>
               <option value="">Select a category</option>
               <option value="road">Road Related</option>
               <option value="emergency">Flooding</option>
