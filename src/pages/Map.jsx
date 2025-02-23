@@ -298,10 +298,10 @@ function Map() {
             Categories:
             <select name="category" value={formData.category} onChange={handleInputChange}>
               <option value="">Select a category</option>
-              <option value="road">Road Related</option>
-              <option value="emergency">Flooding</option>
-              <option value="health">Stranded</option>
-              <option value="politics">Medical Related</option>
+              <option value="Road Related">Road Related</option>
+              <option value="Flooding">Flooding</option>
+              <option value="Stranded">Stranded</option>
+              <option value="Medical Related">Medical Related</option>
             </select>
             <label>
               Type of Report:
