@@ -13,7 +13,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route element={<ProtectedRoute />}>
-            <Route path="/home" element={<Home />} />
+            <Route index element={<Home />} />
             <Route path="/map" element={<Map />} />
             <Route path="/account" element={<Account />} />
           </Route>

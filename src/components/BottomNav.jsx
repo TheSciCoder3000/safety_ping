@@ -23,7 +23,7 @@ const BottomNav = () => {
                 value={value}
                 onChange={(event, newValue) => {
                     setValue(newValue);
-                    const paths = ["Home", "Map", "Account"]
+                    const paths = ["", "map", "account"]
                     navigate(`/${paths[newValue]}`)
                 }}
             >

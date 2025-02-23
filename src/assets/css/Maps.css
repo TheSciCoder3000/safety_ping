@@ -56,17 +56,32 @@
   
   .toggle-add-pin {
     position: absolute;
-    bottom: 80px;
-    left: 20px;
-    background: #007bff;
+    bottom: 4rem;
+    left: 1rem;
+    margin: 10px;
+    background: #457b9d;
     color: white;
     border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
     z-index: 1000;
   }
   
   .toggle-add-pin:hover {
-    background: #0056b3;
+    background: #457b9d;
+  }
+
+  .get-user-location{
+    position: absolute;
+    bottom: 4rem;
+    right: 1rem;
+    margin: 10px;
+    width: 66px;
+    height: 40px;
+    background: #457b9d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1000;
   }
