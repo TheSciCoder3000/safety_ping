@@ -23,7 +23,7 @@ const NewsFeed = () => {
 
 
             <div className="scrollable">
-            <h1 className="news-t">News Feed</h1>
+            <h1 className="news-t">News Report</h1>
             {posts.length > 0 ? (
                 posts.map((post) => (
                     <div className="square" key={post.id}>
