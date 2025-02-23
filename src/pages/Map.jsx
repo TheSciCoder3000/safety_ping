@@ -306,7 +306,7 @@ function Map() {
               </select>
             </label>
           </label>
-          <button type="submit">Add Pin</button>
+          <button type="submit" className='add-pin-btn'>Add Pin</button>
         </form>
       )}
       <button
