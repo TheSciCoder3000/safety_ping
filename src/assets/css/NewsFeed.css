@@ -20,6 +20,18 @@
     color: #000000;
 }
 
+.news-p-r{
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: red;
+}
+
+.news-p-o{
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: orange;
+}
+
 .news-h{
     font-weight: 600;
     color: #000000;

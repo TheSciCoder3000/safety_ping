@@ -30,7 +30,7 @@ const NewsFeed = () => {
                         <h2 className="news-h">{post.title}</h2>
                         <p className="news-p">{post.timestamp?.toDate().toString()}</p>
                         <p className="news-p">{post.description}</p>
-                        <p className="news-p">{post.report}</p>
+                        <p className={post.report === "SOS" ? "news-p-r" : "news-p" || post.report === "Hazards" ? "news-p-o" : "news-p" }>{post.report}</p>
                         <p className="news-p">{post.location?.lat},{post.location?.lat}</p>
                         <p className="news-p">{post.category}</p>
                     </div>
