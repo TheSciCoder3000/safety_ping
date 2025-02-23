@@ -17,7 +17,7 @@ function Map() {
     time: '',
     date: '',
     categories: '',
-    reports: ''
+    report: 'SOS'
   });
   const [loading, setLoading] = useState(true);
   const [pins, setPins] = useState([]);
@@ -63,7 +63,8 @@ function Map() {
 
           // Add fetched pins to the map
           fetchedPins.forEach(pin => {
-            if (pin.location) new mapboxgl.Marker()
+            const color = pin.report == 'SOS' ? 'red' : 'blue';
+            if (pin.location) new mapboxgl.Marker({ color: color })
               .setLngLat(pin.location)
               .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pin.description))
               .addTo(map);
@@ -119,7 +120,8 @@ function Map() {
 
           // Add fetched pins to the map
           fetchedPins.forEach(pin => {
-            new mapboxgl.Marker()
+            const color = pin.report == 'SOS' ? 'red' : 'blue';
+            if (pin.location) new mapboxgl.Marker({ color: color })
               .setLngLat(pin.location)
               .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pin.description))
               .addTo(map);
@@ -192,12 +194,24 @@ function Map() {
         await setDoc(pinIdDocRef, { currentId: pinId });
       }
 
+      console.log({
+        description: formData.description,
+        details: formData.details,
+        categories: formData.categories,
+        report: formData.report,
+        pinId: pinId,
+        location: location,
+        time: formData.time,
+        date: formData.date,
+        userId: userId // Include the user ID in the pin document
+      })
+
       // Add the pin to Firestore with the user ID
       const docRef = await addDoc(collection(db, 'pins'), {
         description: formData.description,
         details: formData.details,
         categories: formData.categories,
-        reports: formData.reports,
+        report: formData.report,
         pinId: pinId,
         location: location,
         time: formData.time,
@@ -220,7 +234,7 @@ function Map() {
         date: '',
         time: '',
         categories: '',
-        reports: ''
+        report: 'SOS'
       });
       setIsAddingPin(false); // Exit "add pin" mode after submission
     } catch (error) {
@@ -244,7 +258,7 @@ function Map() {
               const { latitude, longitude } = position.coords;
               setUserLocation({ lat: latitude, lng: longitude });
               mapRef.current.flyTo({ center: [longitude, latitude], zoom: 14 });
-              new mapboxgl.Marker({ color: 'red' })
+              new mapboxgl.Marker({ color: 'green' })
                 .setLngLat([longitude, latitude])
                 .setPopup(new mapboxgl.Popup({ offset: 25 }).setText('You are here'))
                 .addTo(mapRef.current);
@@ -300,9 +314,9 @@ function Map() {
             </select>
             <label>
               Type of Report:
-              <select name="reports" value={formData.reports} onChange={handleInputChange}>
-                <option value="sos">SOS/Emergencies</option>
-                <option value="hazards">Hazards</option>
+              <select name="report" value={formData.report} onChange={handleInputChange}>
+                <option selected value="SOS">SOS/Emergencies</option>
+                <option value="Hazards">Hazards</option>
               </select>
             </label>
           </label>
