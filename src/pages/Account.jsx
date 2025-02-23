@@ -14,6 +14,7 @@ const Account = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
+  const [profileFormClass, setProfileFormClass] = useState('profile-form');
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -38,6 +39,18 @@ const Account = () => {
     }
   };
 
+  const handleEditClick = () => {
+    setProfileFormClass('profile-form show'); // Slide down animation
+    setIsEditing(true);
+  };
+
+  const handleCancelClick = () => {
+    setProfileFormClass('profile-form hide'); // Slide up animation
+    setTimeout(() => {
+      setIsEditing(false); // Hide after animation completes
+    }, 500);
+  };
+
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     try {
@@ -49,36 +62,22 @@ const Account = () => {
         displayName: `${firstname} ${lastname}`
       });
       alert('Profile updated successfully');
-      setIsEditing(false);
+      handleCancelClick();
     } catch (error) {
       console.error('Error updating profile: ', error);
       alert('Error updating profile');
     }
   };
 
-  const handleChangePassword = async (e) => {
-    e.preventDefault();
-    try {
-      await updatePassword(auth.currentUser, newPassword);
-      alert('Password updated successfully');
-      setNewPassword('');
-      setIsChangingPassword(false);
-    } catch (error) {
-      console.error('Error updating password: ', error);
-      alert('Error updating password');
-    }
-  };
-
   return (
     <div className="account-container">
-      <p>Account Page</p>
       {user && <h1>Welcome, {user.firstname}</h1>}
       {!isEditing ? (
-        <button onClick={() => setIsEditing(true)} className="edit-button">Edit Profile</button>
+        <button onClick={handleEditClick} className="edit-button">Edit Profile</button>
       ) : (
         <>
-          <form onSubmit={handleUpdateProfile} className="profile-form">
-            <label>
+          <form onSubmit={handleUpdateProfile} className={profileFormClass}>
+            <label className='labelText'>
               Firstname:
               <input
                 type="text"
@@ -87,7 +86,7 @@ const Account = () => {
                 required
               />
             </label>
-            <label>
+            <label className='labelText'>
               Lastname:
               <input
                 type="text"
@@ -97,25 +96,8 @@ const Account = () => {
               />
             </label>
             <button type="submit" className='submit-button'>Update Profile</button>
-            <button type="button" onClick={() => setIsEditing(false)} className="cancel-button">Cancel</button>
+            <button type="button" onClick={handleCancelClick} className="cancel-button">Cancel</button>
           </form>
-          {!isChangingPassword ? (
-            <button onClick={() => setIsChangingPassword(true)} className="change-password-button">Change Password</button>
-          ) : (
-            <form onSubmit={handleChangePassword} className="password-form">
-              <label>
-                New Password:
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required
-                />
-              </label>
-              <button type="submit" className='submit-button'>Update Password</button>
-              <button type="button" onClick={() => setIsChangingPassword(false)} className="cancel-button">Cancel</button>
-            </form>
-          )}
         </>
       )}
       <button onClick={handleLogout} className="logout-button">Logout</button>

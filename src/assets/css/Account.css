@@ -1,25 +1,74 @@
 .account-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    background-color: #f1f1f1;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    margin: 20px auto;
-  }
+  position: relative;
+  width: 100vw;
+  min-height: 100vh; 
+  background-color: #1D3557;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden; 
+}
   
   h1 {
     font-size: 25px;
-    color: #333;
+    color: #F1FAEE;
+    margin-top: 50px;
   }
   
   p {
     font-size: 30px;
-    color: #666;
+    color: #1D3557;
   }
-  
+
+
+/* prompt by chatGPT */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+/* end of prompt by chatGPT */
+
+.profile-form {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.profile-form.show {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+  animation: slideDown 0.5s ease-in-out;
+}
+
+.profile-form.hide {
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: slideUp 0.5s ease-in-out;
+}
+
   .profile-form,.password-form  {
     display: flex;
     flex-direction: column;
@@ -30,80 +79,69 @@
   .profile-form label, .password-form label {
     margin-bottom: 10px;
     font-size: 16px;
-    color: #333;
+    color: #F1FAEE;
   }
   
   .profile-form input, .password-form input {
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #F1FAEE;
     border-radius: 5px;
     font-size: 16px;
     width: 90%;
   }
   
-  .edit-button {
-    padding: 10px;
-    background-color: #184c84;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding-bottom: 20px;
-    width: 50%;
-  }
-  
-  .edit-button:hover {
-    background-color: #4a92de;
-  }
-  .submit-button {
-    padding: 10px;
-    background-color: #184c84;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-    width: 50%;
-  }
-  
-  .submit-button:hover {
-    background-color: #4a92de;
-  }
-  
-  .cancel-button {
-    padding: 10px;
-    background-color: #4c787b;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 10px;
-    padding-bottom: 20px;
-    width: 50%;
-  }
-  
+  .edit-button:hover, 
+  .submit-button:hover, 
   .cancel-button:hover {
-    background-color: #4a92de;
+      background-color: #184c84;
+      color: white;
   }
-  
-  
-  .logout-button {
-    padding: 10px;
-    background-color: #dc3545;
+  .logout-button:hover {
+    background-color: rgb(199, 43, 43);
     color: white;
-    border: none;
+}
+.button {
+    position: relative;
+    overflow: hidden;
+}
+
+
+.edit-button, 
+.submit-button, 
+.cancel-button {
+    padding: 10px;
+    background-color: transparent;
+    color: #F1FAEE; 
     border-radius: 5px;
     font-size: 16px;
+    border: #F1FAEE 1px solid;
     cursor: pointer;
-  }
-  
-  .logout-button:hover {
-    background-color: #c82333;
-  }
+    margin-top: 10px;
+    width: 90%;
+    transition: all 0.3s ease-in-out;
+}
+
+.logout-button{
+  padding: 10px;
+  background-color: transparent;
+  color: red; 
+  border-radius: 5px;
+  font-size: 16px;
+  border: red 1px solid;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 90%;
+  transition: all 0.3s ease-in-out;
+}
+
+.button::after {
+  content: "";
+  position: absolute;
+  background: rgba(255,255,255,0.5);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: scale(0);
+  opacity: 1;
+  transition: transform 0.5s, opacity 0.6s;
+}

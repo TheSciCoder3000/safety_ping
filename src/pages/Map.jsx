@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../assets/css/Maps.css';
@@ -23,6 +23,7 @@ function Map() {
   const [pins, setPins] = useState([]);
   const [isAddingPin, setIsAddingPin] = useState(false); // Toggle for "add pin" mode
   const [userId, setUserId] = useState(null); // State to store the current user's ID
+  const [userLocation, setUserLocation] = useState(null); // State to store user's location
 
   // Fetch the current user's ID when the component mounts
   useEffect(() => {
@@ -43,22 +44,34 @@ function Map() {
       const { latitude, longitude } = position.coords;
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
-        style: 'mapbox://styles/examples/clg45vm7400c501pfubolb0xz',
-        center: [longitude, latitude], 
+        style: 'mapbox://styles/mapbox/streets-v12', // Ensure this style URL is valid
+        center: [longitude, latitude], // Set center to user's current location
         zoom: 10.7
       });
 
       mapRef.current = map;
 
       const fetchPins = async () => {
-        const querySnapshot = await getDocs(collection(db, 'pins'));
-        querySnapshot.forEach((doc) => {
-          const pinData = doc.data();
-          new mapboxgl.Marker()
-            .setLngLat(pinData.location)
-            .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pinData.description))
-            .addTo(mapRef.current);
-        });
+        try {
+          const querySnapshot = await getDocs(collection(db, 'pins'));
+          const fetchedPins = [];
+          querySnapshot.forEach((doc) => {
+            fetchedPins.push({ id: doc.id, ...doc.data() });
+          });
+          setPins(fetchedPins);
+          setLoading(false);
+
+          // Add fetched pins to the map
+          fetchedPins.forEach(pin => {
+            if (pin.location) new mapboxgl.Marker()
+              .setLngLat(pin.location)
+              .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pin.description))
+              .addTo(map);
+          });
+        } catch (error) {
+          console.error('Error fetching pins: ', error);
+          setLoading(false);
+        }
       };
 
       fetchPins();
@@ -93,15 +106,28 @@ function Map() {
 
       mapRef.current = map;
 
+      // Fetch pins from Firestore
       const fetchPins = async () => {
-        const querySnapshot = await getDocs(collection(db, 'pins'));
-        querySnapshot.forEach((doc) => {
-          const pinData = doc.data();
-          new mapboxgl.Marker()
-            .setLngLat(pinData.location)
-            .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pinData.description))
-            .addTo(mapRef.current);
-        });
+        try {
+          const querySnapshot = await getDocs(collection(db, 'pins'));
+          const fetchedPins = [];
+          querySnapshot.forEach((doc) => {
+            fetchedPins.push({ id: doc.id, ...doc.data() });
+          });
+          setPins(fetchedPins);
+          setLoading(false);
+
+          // Add fetched pins to the map
+          fetchedPins.forEach(pin => {
+            new mapboxgl.Marker()
+              .setLngLat(pin.location)
+              .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(pin.description))
+              .addTo(map);
+          });
+        } catch (error) {
+          console.error('Error fetching pins: ', error);
+          setLoading(false);
+        }
       };
 
       fetchPins();
@@ -206,6 +232,35 @@ function Map() {
   const handleToggleAddPin = () => {
     setIsAddingPin(!isAddingPin);
     setShowForm(false); // Hide the form when exiting "Add Pin Mode"
+  }
+
+  // Function to get user's location
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+        if (result.state === 'granted' || result.state === 'prompt') {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              setUserLocation({ lat: latitude, lng: longitude });
+              mapRef.current.flyTo({ center: [longitude, latitude], zoom: 14 });
+              new mapboxgl.Marker({ color: 'red' })
+                .setLngLat([longitude, latitude])
+                .setPopup(new mapboxgl.Popup({ offset: 25 }).setText('You are here'))
+                .addTo(mapRef.current);
+            },
+            (error) => {
+              console.error('Error getting user location:', error);
+              alert('Error getting user location');
+            }
+          );
+        } else {
+          alert('Geolocation permission denied');
+        }
+      });
+    } else {
+      alert('Geolocation is not supported by this browser.');
+    }
   };
 
   return (
@@ -220,7 +275,7 @@ function Map() {
           </label>
           <label>
             Details:
-            <input name="details" value={formData.details} onChange={handleInputChange}required />
+            <input name="details" value={formData.details} onChange={handleInputChange} required />
           </label>
           <label>
             Time:
@@ -244,7 +299,7 @@ function Map() {
               <option value="politics">Medical Related</option>
             </select>
             <label>
-              Type of Report: 
+              Type of Report:
               <select name="reports" value={formData.reports} onChange={handleInputChange}>
                 <option value="sos">SOS/Emergencies</option>
                 <option value="hazards">Hazards</option>
@@ -258,8 +313,10 @@ function Map() {
         className="toggle-add-pin"
         onClick={handleToggleAddPin}
       >
-        {isAddingPin ? 'Exit Add Pin Mode' : 'Add Pin Mode'}
+        {isAddingPin ? 'Exit Add Pin' : 'Add Pin'}
       </button>
+
+      <button className="get-user-location" onClick={getUserLocation}>Get My Location</button>
       <BottomNav />
     </>
   );
